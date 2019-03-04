@@ -1,6 +1,7 @@
-node_modules
-cache
-vendor
+cache/*
+.idea/*
+vendor/*
+node_modules/*
 composer.lock
 yarn.lock
 package-lock.json
