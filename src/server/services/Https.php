@@ -8,10 +8,10 @@
 
 namespace CloudsDotEarth\App\Services;
 
-use CloudsDotEarth\App\Core\Interfaces\Service as IService;
+use CloudsDotEarth\App\Core\Interfaces\ServiceInterface;
 use CloudsDotEarth\App\Core\Service;
 
-class Https extends Service implements IService {
+class Https extends Service implements ServiceInterface {
     public function register(): void {
 
     }

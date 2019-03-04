@@ -33,6 +33,8 @@ class Core {
     {
         $this->parsedYamlConfig = Yaml::parseFile(__DIR__ . "/../../../config.yaml");
         $this->controllerStack = new ControllerStack();
-        $this->serviceStack = new ServiceStack($this);
+        $this->serviceStack = new ServiceStack();
+        $this->serviceStack->setCore($this);
+        $this->serviceStack->start();
     }
 }

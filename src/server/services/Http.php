@@ -9,10 +9,10 @@
 
 namespace CloudsDotEarth\App\Services;
 
-use CloudsDotEarth\App\Core\Interfaces\Service as IService;
+use CloudsDotEarth\App\Core\Interfaces\ServiceInterface;
 use CloudsDotEarth\App\Core\Service;
 
-class Http extends Service implements IService {
+class Http extends Service implements ServiceInterface {
 
     public const supportedTypes = [
         "GET", "POST", "UPDATE", "DELETE"
@@ -27,11 +27,6 @@ class Http extends Service implements IService {
             $response->end("hello world");
             //  $response->end();
         });
-
-        $this->service->set([
-            'document_root' => realpath(__DIR__ . "/../public"),
-            'enable_static_handler' => true
-        ]);
     }
 
     public function start(): void {

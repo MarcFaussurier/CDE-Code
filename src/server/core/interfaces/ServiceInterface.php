@@ -8,8 +8,7 @@
 
 namespace CloudsDotEarth\App\Core\Interfaces;
 
-
-interface Service
+interface ServiceInterface
 {
     public function register(): void;
 

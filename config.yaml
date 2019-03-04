@@ -13,8 +13,3 @@ services:
   swoole_options:
       document_root : /../public
       enable_static_handler : true
-# no one for now
-- sku         : BL4438H
-  quantity    : 1
-  description : Super Hoop
-  price       : 2392.00

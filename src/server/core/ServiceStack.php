@@ -8,11 +8,13 @@
 
 namespace CloudsDotEarth\App\Core;
 
+use CloudsDotEarth\App\Core\Interfaces\CoreAwareInterface;
+
 /**
  * Class ServiceStack
  * @package CloudsDotEarth\App\Core
  */
-class ServiceStack extends Stack
+class ServiceStack extends Stack implements CoreAwareInterface
 {
     /**
      * @var Service[]
@@ -26,11 +28,25 @@ class ServiceStack extends Stack
 
     /**
      * ServiceStack constructor.
-     * @param Core $core
      */
-    public function __construct(Core &$core)
+    public function __construct()
     {
         parent::__construct("services");
-        var_dump($this->data);
+    }
+
+    /**
+     * @param Core $core
+     */
+    public function setCore(Core &$core): void
+    {
+        foreach ($this->data as $v) {
+            $v->setCore($core);
+        }
+    }
+
+    public function start(): void {
+        foreach ($this->data as $v) {
+            $v->start();
+        }
     }
 }
