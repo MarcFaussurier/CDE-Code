@@ -1,0 +1,22 @@
+{
+    "name": "cloudsdotearth/code",
+    "authors": [
+        {
+            "name": "marcfsr",
+            "email": "faussurier.marc@icloud.com"
+        }
+    ],
+    "require": {
+        "ext-swoole": "^4.2",
+        "symfony/yaml": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "CloudsDotEarth\\App\\": "src/server/",
+            "CloudsDotEarth\\Bundles\\": "bundles/"
+        }
+    },
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
+    }
+}
