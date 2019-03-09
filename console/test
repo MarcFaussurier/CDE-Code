@@ -3,6 +3,8 @@
 /**
  * Created by PhpStorm.
  * User: marcfsr
- * Date: 28/02/2019
- * Time: 12:06
+ * Date: 08/03/2019
+ * Time: 18:52
  */
+
+require_once __DIR__ . "/../vendor/cloudsdotearth/swoole-tests/swtest.php";

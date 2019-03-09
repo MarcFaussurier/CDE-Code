@@ -1,22 +1,38 @@
 {
-    "name": "cloudsdotearth/code",
+    "name": "marcfsr/swoole-webapp",
+    "type": "project",
+    "description": "",
+    "license": "GPL",
     "authors": [
         {
             "name": "marcfsr",
             "email": "faussurier.marc@icloud.com"
         }
     ],
+    "minimum-stability": "dev",
+    "repositories": [
+      {
+        "name": "cloudsdotearth/swoole-tests",
+        "version": "master",
+        "url": "https://github.com/MarcFaussurier/swoole-tests.git",
+        "type": "git"
+      }
+    ],
     "require": {
-        "ext-swoole": "^4.2",
-        "symfony/yaml": "^4.2"
+        "symfony/yaml": "^4.3@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8",
+        "eaglewu/swoole-ide-helper": "dev-master",
+        "cloudsdotearth/swoole-tests": "dev-master"
+    },
+    "scripts": {
+        "test": "php vendor/phpunit/phpunit/phpunit tests"
     },
     "autoload": {
         "psr-4": {
-            "CloudsDotEarth\\App\\": "src/server/",
-            "CloudsDotEarth\\Bundles\\": "bundles/"
+            "CloudsDotEarth\\App\\" : "src/server",
+            "CloudsDotEarth\\Bundles\\" : "bundles"
         }
-    },
-    "require-dev": {
-        "eaglewu/swoole-ide-helper": "dev-master"
     }
 }

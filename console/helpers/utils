@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+
+GREEN='\e[32m'; CYAN='\e[36m'; NC='\e[0m';RED='\e[31m';
+job1=0; job2=0;
+CURRENT_LIBS=();
+RETURN=0;
+
+# Wait for file update in given $1 folders, will then start $2 function in job1 process and store its job id in job1
+function watchFolders() {
+    # MacOS
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        fswatch ${1} | (while read; do
+            # Kill the previous job1
+            killJob ${job1};
+            # Re-create it using the sync function
+            async $2;
+            # Store the job id in job1
+            job1=${RETURN};
+         done;)
+    # Linux
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        while inotifywait -e modify ${1}; do
+                # Kill the previous job1
+                killJob ${job1};
+                # Re-create it using the sync function
+                async $2;
+                # Store the job id in job1
+                job1=${RETURN};
+         done;
+    # Other os
+    else
+        printf "${RED} Your OS ${NC}${CYAN}$OSTYPE${NC}${RED} is not currently supported.${NC}\n";
+        exit 1;
+    fi;
+};
+
+# Will start the watcher using given callback and folders name
+function watch() {
+    # We run the callback using async
+    async $2;
+    # And store its id in job1.
+    job1=${RETURN};
+    # We async watch for the given folders, and manage job1 when needed
+    async watchFolders "$1" $2;
+    # We store the watcher id in job2
+    job2=${RETURN};
+    # And await all jobs to finish (wait a CTRL + C)
+    awaitAll;
+};
+
+# deps manager function
+function install {
+    # then perform a simple git clone / update
+    printf "________________________\n";
+    # if given repo does not exist, we clone it
+    if [[ ! -d $1 ]]; then
+        printf "${GREEN} Installing${NC} => ${CYAN}$1${NC} (@$2) ... \n";
+        mkdir -p ${1};
+        printf "Cloning from $3 \n";
+        git clone ${3} -b $2 ./${1} --recursive;
+    # else we update it
+    else
+        printf "${GREEN} Updating${NC} => ${CYAN}$1${NC} (@$2) ... \n";
+        cd ./$1;
+        git fetch --all;
+        git reset --soft $2;
+        cd ./../;
+    fi;
+    # we run existing build commands if given
+    if [[ ! -z $4 ]]; then
+        cd ./$1;
+        firstString=$4;
+        secondString=$1;
+        toeval=${firstString//%LIBNAME%/$secondString};
+        echo "${toeval}";
+        eval "${toeval}";
+        cd ./../;
+    fi;
+    # then we add the lib to the installed ones
+    CURRENT_LIBS+=("$1/");
+};
+
+# called before begin of installation script
+function goToLibs() {
+    cd ./libs;
+};
+
+# called after begin of installation script
+function checkForRemovedDependencies() {
+    # for each folders in libs folders
+    for d in */ ; do
+        # if the given folder was not given in deps file, we assume that the folder is no longer required
+        if [[ ! " ${CURRENT_LIBS[*]} " == *"$d"* ]]; then
+            # we remove it
+            printf "${RED} Uninstalling${NC} => ./libs/${CYAN}$d${NC} ... \n";
+            rm -rf "${d}";
+        fi;
+    done;
+    cd ./../;
+};
+
+# will remove previous notification so that we can instantly notify the user about a live event.
+function removePreviousNotifications() {
+    if pgrep -x "notify-osd" > /dev/null; then
+        killall notify-osd;
+    fi;
+}
+
+function rmdir {
+    rm -rf ./$1;
+    mkdir ./$1;
+    cd ./$1;
+    touch .gitkeep;
+    cd ./../;
+};

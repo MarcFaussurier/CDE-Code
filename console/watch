@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source console/helpers/async;
+source console/helpers/utils;
+
+# Configuration
+ico=$(pwd)/console/images/cpp.png;   # Icon of the image used for notifications
+dirs="./src/";               # Folders to watch
+recompile_title="Source code updated!";
+recompile_msg="File update detected in one of these folders ${dirs}, now re-compiling ...";
+recompile_done_title="Compilation done!";
+recompile_done_msg="Now running the software ...";
+
+# Function called at each folder source code update
+function buildAndRun() {
+    removePreviousNotifications;
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        terminal-notifier -title "${recompile_title}" -message "${recompile_msg}"  -appIcon "${ico}"
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        notify-send -i "${ico}" "${recompile_title}" "${recompile_msg}";
+    fi;
+    console/run;
+    removePreviousNotifications;
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        terminal-notifier -title "${recompile_done_title}" -message "${recompile_done_msg}"  -appIcon "${ico}"
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        notify-send -i "${ico}" "${recompile_done_title}" "${recompile_done_msg}";
+    fi;
+};
+
+# Start watcher
+watch "${dirs}" buildAndRun;

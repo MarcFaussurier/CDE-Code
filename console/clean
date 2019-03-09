@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+source console/helpers/utils;
+
+# removing built web dependencies
+rmdir www/assets/build;

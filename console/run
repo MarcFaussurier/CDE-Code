@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# todo : add client compilation too
+
+console/server_start;

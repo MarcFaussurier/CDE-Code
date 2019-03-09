@@ -13,3 +13,8 @@ services:
   swoole_options:
       document_root : /../public
       enable_static_handler : true
+mysql:
+  host      : 127.0.0.1
+  user      : root
+  password  : 123456##
+  database  : cde_code
