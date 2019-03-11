@@ -8,7 +8,7 @@
 
 namespace CloudsDotEarth\App\Controllers;
 
-use CloudsDotEarth\App\Core\Controller;
+use CloudsDotEarth\Bundles\Core\Controller;
 
 class Registration extends Controller {
     public function __construct()

@@ -1,7 +1,13 @@
-cache/*
+# ide
 .idea/*
+
+# dep managers
 vendor/*
 node_modules/*
 composer.lock
 yarn.lock
 package-lock.json
+
+# cloudsdotearth/code
+generated/*
+cache/*

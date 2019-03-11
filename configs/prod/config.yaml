@@ -1,0 +1,15 @@
+# This is the only CDE Framework configuration file
+# -------------------------------------------------
+#
+# Services are used to reply requests sent to a port
+# you can basically create any service for any protocol
+# we are using Swoole for now because of its impressive
+# performance.
+#
+services:
+- name  : http
+  port  : 8080
+# ip : 0.0.0.0
+  swoole_options:
+      document_root : /../public
+      enable_static_handler : true

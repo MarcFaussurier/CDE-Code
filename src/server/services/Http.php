@@ -9,8 +9,8 @@
 
 namespace CloudsDotEarth\App\Services;
 
-use CloudsDotEarth\App\Core\Interfaces\ServiceInterface;
-use CloudsDotEarth\App\Core\Service;
+use CloudsDotEarth\Bundles\Core\Interfaces\ServiceInterface;
+use CloudsDotEarth\Bundles\Core\Service;
 
 class Http extends Service implements ServiceInterface {
 

@@ -8,7 +8,7 @@
 
 namespace CloudsDotEarth\App\Models;
 
-use CloudsDotEarth\App\Core\Model;
+use CloudsDotEarth\Bundles\Core\Model;
 
 class User extends Model {
     public static $tableName = "users";

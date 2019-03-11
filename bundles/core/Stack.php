@@ -6,7 +6,7 @@
  * Time: 09:33
  */
 
-namespace CloudsDotEarth\App\core;
+namespace CloudsDotEarth\Bundles\Core;
 
 /**
  * Class Stack

@@ -6,9 +6,9 @@
  * Time: 10:19
  */
 
-namespace CloudsDotEarth\App\Core\Interfaces;
+namespace CloudsDotEarth\Bundles\Core\Interfaces;
 
-use CloudsDotEarth\App\Core\Core;
+use CloudsDotEarth\Bundles\Core\Core;
 
 interface CoreAwareInterface {
     public function setCore(Core &$core);

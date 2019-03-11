@@ -8,6 +8,7 @@ include_once __DIR__ . "/../vendor/autoload.php";
  * Time: 12:06
  */
 
-new \CloudsDotEarth\App\Core\Core();
-
+go(function() {
+    new \CloudsDotEarth\Bundles\Core\Core();
+});
 

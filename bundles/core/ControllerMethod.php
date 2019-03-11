@@ -6,7 +6,7 @@
  * Time: 17:17
  */
 
-namespace CloudsDotEarth\App\Core;
+namespace CloudsDotEarth\Bundles\Core;
 
 class ControllerMethod {
     /**

@@ -6,7 +6,7 @@
  * Time: 13:36
  */
 
-namespace CloudsDotEarth\App\Core;
+namespace CloudsDotEarth\Bundles\Core;
 
 class View {
 

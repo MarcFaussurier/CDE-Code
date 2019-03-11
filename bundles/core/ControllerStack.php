@@ -6,7 +6,7 @@
  * Time: 10:37
  */
 
-namespace CloudsDotEarth\App\Core;
+namespace CloudsDotEarth\Bundles\Core;
 
 
 class ControllerStack extends Stack

@@ -1,0 +1,61 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var path = require('path');
+var Handlebars = require("handlebars");
+
+
+
+var initialDir = "src/client/views";
+
+var dirs = [initialDir];
+
+var walk = function(initialDir, dir, done) {
+    var results = [];
+    fs.readdir(dir, function(err, list) {
+        if (err) return done(err);
+        var pending = list.length;
+        if (!pending) return done(null, results);
+        list.forEach(function(file) {
+            file = path.resolve(dir, file);
+            fs.stat(file, function(err, stat) {
+                if (stat && stat.isDirectory()) {
+                    walk(initialDir, file, function(err, res) {
+                        results = results.concat(res);
+                        if (!--pending) done(null, results);
+                    });
+                } else {
+                    var split = file.split(".");
+                    if (split[split.length - 1] === "hbs") {
+                        var a = file.split(initialDir);
+                        results.push([file, a[a.length - 1]]);
+                        if (!--pending) done(null, results);
+                    }
+                }
+            });
+        });
+    });
+};
+
+var f = function(dirs) {
+    for(let k in dirs) {
+        let initialDir = dirs[k];
+
+        walk(initialDir, initialDir, function (err, res) {
+            console.log(res);
+            for(var k in res) {
+                if (res.hasOwnProperty(k)) {
+                    var template = fs.readFileSync(res[k][0]).toString();
+                    var compiled = Handlebars.precompile(template);
+                    var folders = "generated/views" + res[k][1];
+                    folders = folders.split("/");
+                    delete folders[folders.length - 1];
+                    fs.mkdirSync(folders.join("/"), { recursive: true });
+                    fs.writeFileSync(("generated/views" + res[k][1]).replace(".hbs", ".js"), compiled);
+                }
+            }
+        });
+    }
+}
+
+f(dirs);

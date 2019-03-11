@@ -6,9 +6,9 @@
  * Time: 09:22
  */
 
-namespace CloudsDotEarth\App\Core;
+namespace CloudsDotEarth\Bundles\Core;
 
-use CloudsDotEarth\App\Core\Interfaces\CoreAwareInterface;
+use CloudsDotEarth\Bundles\Core\Interfaces\CoreAwareInterface;
 
 /**
  * Class ServiceStack

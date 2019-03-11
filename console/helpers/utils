@@ -107,9 +107,10 @@ function removePreviousNotifications() {
 }
 
 function rmdir {
+    CUR_PWD=$(pwd)
     rm -rf ./$1;
     mkdir ./$1;
     cd ./$1;
     touch .gitkeep;
-    cd ./../;
+    cd $CUR_PWD;
 };

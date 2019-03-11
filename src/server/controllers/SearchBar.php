@@ -7,7 +7,7 @@
  */
 namespace CloudsDotEarth\App\Controllers;
 
-use CloudsDotEarth\App\Core\Controller;
+use CloudsDotEarth\Bundles\Core\Controller;
 
 class SearchBar extends Controller {
     public function __construct()

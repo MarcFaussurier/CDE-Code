@@ -6,7 +6,7 @@
  * Time: 11:33
  */
 
-namespace CloudsDotEarth\App\Core\Interfaces;
+namespace CloudsDotEarth\Bundles\Core\Interfaces;
 
 interface ServiceInterface
 {

@@ -6,10 +6,10 @@
  * Time: 13:36
  */
 
-namespace CloudsDotEarth\App\Core;
+namespace CloudsDotEarth\Bundles\Core;
 
-use CloudsDotEarth\App\Core\Interfaces\CoreAwareInterface;
-use CloudsDotEarth\App\Core\Interfaces\ServiceInterface;
+use CloudsDotEarth\Bundles\Core\Interfaces\CoreAwareInterface;
+use CloudsDotEarth\Bundles\Core\Interfaces\ServiceInterface;
 
 class Service implements CoreAwareInterface, ServiceInterface {
     /**

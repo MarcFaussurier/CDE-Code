@@ -8,7 +8,7 @@
 
 namespace CloudsDotEarth\Bundles\Test\Controllers;
 
-use CloudsDotEarth\App\Core\Controller;
+use CloudsDotEarth\Bundles\Core\Controller;
 
 class Toto extends Controller {
     public function __construct()
