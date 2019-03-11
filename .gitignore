@@ -9,6 +9,7 @@ yarn.lock
 package-lock.json
 
 # cloudsdotearth/code
-generated/*
-cache/*
 configs/.env
+generated/*
+logs/*
+cache/*
