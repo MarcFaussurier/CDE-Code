@@ -1,0 +1,11 @@
+{
+  "name": "swoole-webapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MarcFaussurier/CDE-Code.git",
+  "author": "marcfsr <faussurier.marc@icloud.com>",
+  "license": "MIT",
+  "dependencies": {
+    "handlebars": "^4.1.0"
+  }
+}
