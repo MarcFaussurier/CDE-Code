@@ -11,3 +11,4 @@ package-lock.json
 # cloudsdotearth/code
 generated/*
 cache/*
+configs/.env
