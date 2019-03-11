@@ -22,10 +22,7 @@ class ViewCompiler
     {
         $hbsFiles = [];
         foreach ($viewDirectories as $dir) {
-            var_dump($dir);
             foreach(Utils::recursiveGlob($dir, "hbs") as $v) {
-
-                var_dump(($a =  explode($dir, $v))[count($a) - 1]);
                 array_push
                 ($hbsFiles,
                     [   $v,
@@ -43,7 +40,6 @@ class ViewCompiler
         }
 
         foreach ($hbsFiles as $v) {
-            var_dump($v);
             $i = $outputDirectory . $v[1];
             $h = explode("/", $i);
             unset($h[count($h) - 1]);

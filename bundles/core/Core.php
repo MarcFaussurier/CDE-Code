@@ -76,9 +76,9 @@ class Core {
 
     public function setDb(): void {
 
-            $db = new \Swoole\Coroutine\MySQL();
+            $this->db = new \Swoole\Coroutine\MySQL();
             try {
-                $db->connect($this->envConfig["database"]);
+                $this->db->connect($this->envConfig["database"]);
             } catch (\Throwable $ex) {
                 var_dump($ex);
             }
@@ -86,11 +86,10 @@ class Core {
 
            // $db->setDefer(false);
           $start = (float) array_sum(explode(' ',microtime()));
-            $stmt = $db->prepare('SELECT * FROM `users`');
+            $stmt =  $this->db->prepare('SELECT * FROM `users`');
             $ret = $stmt->execute([]);
             $end = (float) array_sum(explode(' ',microtime()));
             print "Processing time: ". sprintf("%.4f", ($end-$start))." seconds.";
             var_dump($ret);
-            $db->close();
     }
 }

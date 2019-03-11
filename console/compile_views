@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+console/compile_client_views;
+console/compile_server_views;

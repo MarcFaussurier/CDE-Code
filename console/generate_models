@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Created by PhpStorm.
+ * User: marcfsr
+ * Date: 11/03/2019
+ * Time: 19:17
+ */
+include_once __DIR__ . "/../vendor/autoload.php";
+
+echo str_color("Now generating data models...", "f_yellow") . PHP_EOL;
+
+go(function () {
+    $core = new \CloudsDotEarth\Bundles\Core\Core();
+    $core->setDb();
+    new \CloudsDotEarth\Bundles\Core\ModelGenerator
+    ($core,
+        [__DIR__ . "/../src/client/models"],
+        __DIR__ . "/../generated/models"
+    );
+});
+
+echo str_color("Generation done.", "f_green") . PHP_EOL;
