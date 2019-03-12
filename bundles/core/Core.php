@@ -8,6 +8,8 @@
 
 namespace CloudsDotEarth\Bundles\Core;
 
+use CloudsDotEarth\App\Models\Group;
+use CloudsDotEarth\App\Models\User;
 use LightnCandy\LightnCandy;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
@@ -35,6 +37,11 @@ class Core {
      * @var \Swoole\Coroutine\MySQL
      */
     public $db;
+
+    /**
+     * @var \Swoole\Coroutine\MySQL
+     */
+    public static $staticDb;
 
     /**
      * Core constructor.
@@ -65,13 +72,29 @@ class Core {
             throw new \Exception("Unable to open yaml file : " . $yamlPath . " (please check .env file)");
         }
         $this->parsedYamlConfig = Yaml::parseFile(__DIR__ . "/../../configs/dev/config.yaml");
-        var_dump(LightnCandy::compile(file_get_contents(__DIR__ . "/../../src/server/views/pages/home.hbs")));
         $this->controllerStack = new ControllerStack();
         $this->serviceStack = new ServiceStack();
         $this->serviceStack->setCore($this);
         $this->setDb();
 
-        new ViewCompiler([__DIR__ . "/../../src/client/views"], __DIR__ . "/../../generated/views");
+        new ViewCompiler
+        (
+            [__DIR__ . "/../../src/client/views"],
+            __DIR__ . "/../../generated/views"
+        );
+
+        new \CloudsDotEarth\Bundles\Core\ModelGenerator
+        ($this,
+            [__DIR__ . "/../../src/client/models"],
+            __DIR__ . "/../../generated/models"
+        );
+
+        foreach (glob(__DIR__ . "/../../generated/models/*.php") as $k => $v) {
+            require_once $v;
+        }
+
+       $user = new User(2);
+
     }
 
     public function setDb(): void {
@@ -85,11 +108,13 @@ class Core {
 
 
            // $db->setDefer(false);
-          $start = (float) array_sum(explode(' ',microtime()));
+            $start = (float) array_sum(explode(' ',microtime()));
             $stmt =  $this->db->prepare('SELECT * FROM `users`');
             $ret = $stmt->execute([]);
             $end = (float) array_sum(explode(' ',microtime()));
             print "Processing time: ". sprintf("%.4f", ($end-$start))." seconds.";
             var_dump($ret);
+
+            self::$staticDb = $this->db;
     }
 }

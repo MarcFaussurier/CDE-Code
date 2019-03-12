@@ -40,14 +40,11 @@ class ViewCompiler
         }
 
         foreach ($hbsFiles as $v) {
-            $i = $outputDirectory . $v[1];
-            $h = explode("/", $i);
-            unset($h[count($h) - 1]);
-            $dirPath = join("/", $h);
-            if (!is_dir($dirPath)) {
-                mkdir(join("/", $h), 0755, true);
-            }
-            file_put_contents(str_replace(".hbs", ".php", $i), "<?php " . LightnCandy::compile($v[0]));
+            Utils::filePutsContent
+            (
+                str_replace(".hbs", ".php", $outputDirectory . $v[1]),
+                "<?php " . LightnCandy::compile($v[0])
+            );
         }
     }
 }

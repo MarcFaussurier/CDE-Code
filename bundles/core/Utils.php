@@ -13,6 +13,50 @@ namespace CloudsDotEarth\Bundles\Core;
  * @package CloudsDotEarth\Bundles\Core
  */
 class Utils {
+
+    /**
+     * Returns all table in the current database
+     * @param Core $core
+     * @return string[]
+     */
+    public static function getDatabaseTables(Core &$core) : array {
+        $output = [];
+        $tables = $core->db->query("show tables");
+        foreach ($tables as $k => $v) {
+            array_push($output, $v["Tables_in_" . $core->envConfig["database"]["database"]]);
+        }
+
+        return $output;
+    }
+
+    /**
+     * @param Core $core
+     * @param string $tableName
+     * @return array
+     */
+    public static function getColsInTable(Core &$core, string $tableName) : array {
+        return
+            $core->db->query("SHOW COLUMNS FROM `". $tableName . "`");
+    }
+
+    /**
+     * @param string $path
+     * @param string $content
+     * @param bool $createPath
+     */
+    public static function filePutsContent(string $path, string $content, bool $createPath = true) {
+        if ($createPath) {
+            $h = explode("/", $path);
+            unset($h[count($h) - 1]);
+            $dirPath = join("/", $h);
+            if (!is_dir($dirPath)) {
+                mkdir(join("/", $h), 0755, true);
+            }
+        }
+        file_put_contents( $path, $content);
+
+    }
+
     /**
      * @param string $dir
      * @param string $ext

@@ -8,12 +8,6 @@
 
 namespace CloudsDotEarth\App\Models;
 
-use CloudsDotEarth\Bundles\Core\Model;
+class Group extends \GroupsProperties {
 
-class Group extends Model {
-    public static $tableName = "users";
-    public static $primaryKey = "row_id";
-    public static $relations = [
-        'grade' => ['one_to_many', 'ModelName']
-    ];
 }
