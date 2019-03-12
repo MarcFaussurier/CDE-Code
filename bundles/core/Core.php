@@ -93,7 +93,15 @@ class Core {
             require_once $v;
         }
 
-       $user = new User(2);
+        // update sample
+        $user = new User(2);
+        $user->username = "toto";
+        $user->save();
+
+        // insert sample
+        $user = new User();
+        $user->username = "toto";
+        $user->save();
 
     }
 
