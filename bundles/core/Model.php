@@ -26,22 +26,52 @@ class Model {
     {
         $this->id = $id;
         if ($this->id !== -1) {
-            echo "TABLE NAME : " . PHP_EOL;
-
             $class = ( "\\" . get_class($this));
             self::$tableName = $class::$tableName;
             $stmt = Core::$staticDb->prepare("SELECT * FROM `".self::$tableName."` WHERE row_id = ?;");
             $rowResult = $stmt->execute([$this->id]);
-            $this->getModelMetaData();
+            $metaData = $this->getModelMetaData();
+
+            if (count($rowResult) !== 1) {
+                throw new \Exception("Unable to fetch model id " . $this->id . " from table "
+                    . self::$tableName . " model have to exists and to be unique");
+            }
+
+            foreach ($rowResult[0] as $k => $v) {
+                var_dump($k);
+                var_dump($v);
+                switch ($a = explode("(", $metaData[$k]["mysql_type"])[0]) {
+                    case "int":
+                        $this->$k = intval($v);
+                        break;
+                    case "varchar":
+                        $this->$k = strval($v);
+                        break;
+                    case "text":
+                        $this->$k = strval($v);
+                        break;
+                    case "datetime":
+                        $this->$k = \DateTime::createFromFormat("Y-m-d H:i:s", $v);
+                        break;
+                    case "timestamp":
+                        $this->$k = (new \DateTime())->setTimestamp(intval($v));
+                        break;
+                    default:
+                        var_dump($a);
+                        throw new \Exception("Unknow MySQL type");
+                        break;
+                }
+            }
+
+            var_dump($this);
         }
     }
 
 
 
-    public function getModelMetaData() : void {
-        $output = [];
+    public function getModelMetaData() : array {
+        $finalOutput = [];
         $source = file_get_contents( __DIR__ . "/../../generated/models/".ucfirst(self::$tableName)."Properties.php" );
-
         $tokens = token_get_all( $source );
         $comment = array(
             T_COMMENT,      // All comments since PHP5
@@ -52,10 +82,30 @@ class Model {
                 continue;
             // Do something with the comment
             $txt = $token[1];
-            var_dump($txt);
-
-            //$output = explode("\n" . $txt);
+            $output = explode("\n" , $txt);
+            $col = $mysqlType = $var = "";
+            foreach ($output as $k => $v) {
+                if (substr_count($v, "@") === 1) {
+                    $endOfLine = explode(" ", explode("@", $v)[1]);
+                    switch ($endOfLine[0]) {
+                        case "var":
+                            $var = $endOfLine[1];
+                            break;
+                        case "mysql_type":
+                            $mysqlType = $endOfLine[1];
+                            break;
+                        case "col":
+                            $col = $endOfLine[1];
+                            break;
+                        default:
+                            throw new \Exception("Unsuported PHPDoc attribute given in generated Model : " . self::$tableName);
+                            break;
+                    }
+                }
+            }
+            $finalOutput[$col] = ["mysql_type" => $mysqlType, "php_type" => $var];
         }
+        return $finalOutput;
     }
 
     /**
