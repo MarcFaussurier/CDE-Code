@@ -13,7 +13,7 @@ yarn.lock
 package-lock.json
 
 # cloudsdotearth/code
-configs/.env
+configs/*.env
 generated/*
 logs/*
 cache/*
