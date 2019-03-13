@@ -1,4 +1,5 @@
 CREATE DATABASE `cde_code` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+use `cde_code`;
 CREATE TABLE `groups` (
   `row_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
@@ -14,3 +15,4 @@ CREATE TABLE `users` (
   `last_name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`row_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `users` VALUES (1,'toto','faussurier.marc@icloud.com','123456','1971-03-12 11:59:01','aa','aa');
