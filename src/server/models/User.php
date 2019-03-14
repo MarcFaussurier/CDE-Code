@@ -8,10 +8,16 @@
 
 namespace CloudsDotEarth\App\Models;
 
-use CloudsDotEarth\Bundles\Core\Model;
-
 class User extends \UsersProperties {
-    public static $relations = [
-        'grade' => ['one_to_many', Group::class]
+    public $relations = [
+        // one to many
+        // many to many
+
+
+        // one to one
+        // many to one
+
+        'grade'     => ['one_to_one', Grade::class],
+        'groups'    => ['many_to_many', Group::class, 'users_groups']
     ];
 }

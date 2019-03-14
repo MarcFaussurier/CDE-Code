@@ -86,4 +86,13 @@ class Utils {
             return $output;
         }
     }
+
+    /**
+     * Will simply return the string in `
+     * @param string $tableName
+     * @return string
+     */
+    public static function graveify(string $tableName) {
+        return "`" . $tableName . "`";
+    }
 }

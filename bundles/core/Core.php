@@ -8,6 +8,7 @@
 
 namespace CloudsDotEarth\Bundles\Core;
 
+use CloudsDotEarth\App\Models\Grade;
 use CloudsDotEarth\App\Models\Group;
 use CloudsDotEarth\App\Models\User;
 use LightnCandy\LightnCandy;
@@ -93,16 +94,32 @@ class Core {
             require_once $v;
         }
 
+        self::includeDirectory(__DIR__ . "/../../src/server/models");
+
+
         // update sample
-        $user = new User(1);
-        $user->username = "toto";
-        $user->save();
+       $user = new User(1);
+       // $user->username = "toto";
+        $user->grade = new Grade(2);
+         $user->save();
 
-        // insert sample
-        $user = new User();
-        $user->username = "toto";
-        $user->save();
+         var_dump($user);
 
+     //   $results = (new User())->select("row_id = ?", [1]);
+     //   var_dump($results);
+
+    }
+
+    /**
+     * Will simply include all php files in a dir
+     * @param string $path
+     */
+    public static function includeDirectory(string $path) {
+        $files = glob($path . "/*.php");
+        foreach ($files as $k => $v) {
+           // echo "including .. " . $v . PHP_EOL;
+            require_once $v;
+        }
     }
 
     public function setDb(): void {
@@ -111,18 +128,9 @@ class Core {
             try {
                 $this->db->connect($this->envConfig["database"]);
             } catch (\Throwable $ex) {
+                echo "Unable to connect to db :(";
                 var_dump($ex);
             }
-
-
-           // $db->setDefer(false);
-            $start = (float) array_sum(explode(' ',microtime()));
-            $stmt =  $this->db->prepare('SELECT * FROM `users`');
-            $ret = $stmt->execute([]);
-            $end = (float) array_sum(explode(' ',microtime()));
-            print "Processing time: ". sprintf("%.4f", ($end-$start))." seconds.";
-            var_dump($ret);
-
             self::$staticDb = $this->db;
     }
 }

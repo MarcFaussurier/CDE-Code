@@ -45,7 +45,7 @@ class ModelGenerator
 class $className extends \\".Model::class."
 {";
         $fileContent .= "
-    public static \$tableName = '" . trim($table) . "';";
+    public \$tableName = '" . trim($table) . "';";
 
         foreach ($cols as $k => $v) {
             $name = $v["Field"];
