@@ -99,7 +99,8 @@ class Core {
         // update sample
        $user = new User(1);
        // $user->username = "toto";
-        $user->grade = new Grade(2);
+        $user->grade = new Grade(1);
+        $user->groups[0] = new Group();
         $user->groups[0]->name = "YEAHHHH";
         $group = new  Group();
         $group->name = "testone";

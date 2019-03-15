@@ -72,7 +72,7 @@ class Model {
                 // todo : save of one-to-many and many-to-one
                 // relation can be one-to-many
                 // or many-to-many
-                if (!isset($this->$col)) {
+                if (in_array($v[0], ['many_to_many', 'one_to_many'])) {
                     $targetTable = $v[2];
                     $query = "SELECT * FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
                     $stmt = Core::$staticDb->prepare($query);
@@ -115,8 +115,6 @@ class Model {
             $cnt = 0;
             foreach ($this->tableMetaData as $key => $value) {
                 $cnt++;
-                var_dump("KEYY : ") ;
-                var_dump($key);
                 if (($key !== "row_id") && ($key !== "")) {
                     $query .= "$key = ?" . (($cnt < ($countOfCols - 1)) ? "," : "");
                     array_push($params, $this->phpToMysqlVal($key));
@@ -125,13 +123,8 @@ class Model {
             $query .= " WHERE row_id = ?;";
             array_push($params, $this->row_id);
         }
-        var_dump($params);
-        var_dump($query);
         $stmt = Core::$staticDb->prepare($query);
-         $stmt->execute($params);
-
-
-         var_dump("IN RELATIONS /////");
+        $stmt->execute($params);
         foreach ($this->relations as $col => $v) {
             // todo : save of one-to-many and many-to-one
             // relation can be one-to-many
@@ -140,28 +133,12 @@ class Model {
                $query = "DELETE FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
                $stmt = Core::$staticDb->prepare($query);
                $stmt->execute([$this->row_id]);
-
                foreach ($this->$col as $instance) {
                    $query = "INSERT INTO " . Utils::graveify($v[2]) . " VALUES (".join(",",str_split(str_repeat("?", 3))) . ");";
                    $stmt = Core::$staticDb->prepare($query);
                    $stmt->execute([null, $this->row_id, $instance->row_id]);
                    $instance->save();
                }
-
-                   /**
-               $stmt = Core::$staticDb->prepare($query);
-               $rows = $stmt->execute(array_map(function($a){ return $a->row_id; }, $this->$col));
-               $this->$col = [];
-               foreach ($rows as $id => $cols) {
-               $className = self::tableNameToClass($col);
-               $colName = self::pluralToSingular($col) . "_id";
-               $foundId = $cols[$colName];
-               array_push($this->$col, new $className($foundId));
-               }
-
-                */
-                // $this->$col
-                // create new groups
              }
         }
         return true;
