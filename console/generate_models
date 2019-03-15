@@ -15,7 +15,6 @@ go(function () {
     $core->setDb();
     new \CloudsDotEarth\Bundles\Core\ModelGenerator
     ($core,
-        [__DIR__ . "/../src/client/models"],
         __DIR__ . "/../generated/models"
     );
 });

@@ -11,8 +11,17 @@ namespace CloudsDotEarth\Bundles\core;
 
 class ModelGenerator
 {
-    public function __construct(Core &$core, array $mdelDirectories, string $outputDirectories)
+
+    public $outputDirectory;
+    /**
+     * ModelGenerator constructor.
+     * @param Core $core
+     * @param string $outputDirectories
+     * @throws \Exception
+     */
+    public function __construct(Core &$core, string $outputDirectory)
     {
+        $this->outputDirectory = $outputDirectory;
         $tables = Utils::getDatabaseTables($core);
         foreach ($tables as $k => $v) {
             // we don't use table that start with a # as they are for jointures
@@ -23,6 +32,11 @@ class ModelGenerator
         }
     }
 
+    /**
+     * @param string $MySQLType
+     * @return string
+     * @throws \Exception
+     */
     public static function MySQLTypeToPHP(string $MySQLType) {
         switch($a = explode("(", $MySQLType)[0]) {
             case "int":
@@ -42,7 +56,12 @@ class ModelGenerator
         }
     }
 
-    public function writePropertiesClass(string $table, array $cols) {
+    /**
+     * @param string $table
+     * @param array $cols
+     * @throws \Exception
+     */
+    public function writePropertiesClass(string $table, array $cols) : void {
         $className = ucfirst($table)."Properties";
         $fileContent = "<?php 
 class $className extends \\".Model::class."
@@ -68,7 +87,7 @@ class $className extends \\".Model::class."
         $fileContent .= "}";
         Utils::filePutsContent
         (
-            "generated/models/$className.php",
+            $this->outputDirectory . "/$className.php",
             $fileContent
         );
     }

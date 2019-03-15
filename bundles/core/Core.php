@@ -86,7 +86,6 @@ class Core {
 
         new \CloudsDotEarth\Bundles\Core\ModelGenerator
         ($this,
-            [__DIR__ . "/../../src/client/models"],
             __DIR__ . "/../../generated/models"
         );
 
