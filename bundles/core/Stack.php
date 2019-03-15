@@ -28,6 +28,7 @@ class Stack
     /**
      * ControllerMethodStack constructor.
      * Will load all class instances in $this->data
+     * Used to load services, controllers ...
      */
     public function __construct(string $stackType)
     {
