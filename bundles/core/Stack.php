@@ -57,7 +57,7 @@ class Stack
             } else {
                 $class = "\\CloudsDotEarth\\App" . $class;
             }
-            // push a new controller instance
+            // push a new instance
             array_push($this->data, new $class());
         }
     }
