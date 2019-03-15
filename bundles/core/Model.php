@@ -168,11 +168,26 @@ class Model {
      * @return bool
      */
     public function delete(): bool {
+        $success = true;
         // if the model was created, no need to delete it
         if ($this->row_id !== self::DEFAULT_ID) {
             $query = "DELETE FROM ".Utils::graveify(self::$tableName)." WHERE row_id = ?;";
             $stmt = Core::$staticDb->prepare($query);
-            return $stmt->execute([$this->row_id]);
+            if (!$stmt->execute([$this->row_id])) {
+                $success = false;
+            }
+            foreach ($this->relations as $col => $v) {
+                // todo : save of one-to-many and many-to-one
+                // relation can be one-to-many
+                // or many-to-many
+                if (in_array($v[0], ["one_to_many", "many_to_many"])) {
+                    $query = "DELETE FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
+                    $stmt = Core::$staticDb->prepare($query);
+                    if (!$stmt->execute([$this->row_id])) {
+                        $success = false;
+                    }
+                }
+            }
         }
         return true;
     }
@@ -275,12 +290,14 @@ class Model {
                     return new $class(intval($mysqlVaue));
                     break;
                 case "one_to_many":
+                    // we should do nothing as the case will be handled later
                     break;
                 case "many_to_one":
                     $class = (self::singularModelToClass($columnName));
                     return new $class(intval($mysqlVaue));
                     break;
                 case "many_to_many":
+                    // we do nothing as the case will be executed later
                     break;
                 default:
                     throw new \Exception("Unknow relation ship : " . $this->relations[$columnName][0] . " in model " .  self::getModelClass());
