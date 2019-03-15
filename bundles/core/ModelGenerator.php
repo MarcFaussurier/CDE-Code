@@ -15,8 +15,11 @@ class ModelGenerator
     {
         $tables = Utils::getDatabaseTables($core);
         foreach ($tables as $k => $v) {
-            $cols = Utils::getColsInTable($core, $v);
-            $this->writePropertiesClass($v, $cols);
+            // we don't use table that start with a # as they are for jointures
+            if (substr($v, 0, 1) !== "#") {
+                $cols = Utils::getColsInTable($core, $v);
+                $this->writePropertiesClass($v, $cols);
+            }
         }
     }
 

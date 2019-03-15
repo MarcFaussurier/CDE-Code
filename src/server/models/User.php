@@ -18,6 +18,6 @@ class User extends \UsersProperties {
         // many to one
 
         'grade'     => ['one_to_one', Grade::class],
-        'groups'    => ['many_to_many', Group::class, 'users_groups']
+        'groups'    => ['many_to_many', Group::class, '#users_groups']
     ];
 }

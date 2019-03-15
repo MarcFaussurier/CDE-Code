@@ -8,9 +8,6 @@
 
 namespace CloudsDotEarth\Bundles\Core;
 
-use CloudsDotEarth\App\Models\Grade;
-use mysql_xdevapi\Exception;
-
 /**
  * Class Model
  * @package CloudsDotEarth\Bundles\Core
@@ -53,7 +50,7 @@ class Model {
     /**
      * Model constructor.
      * @param int $id
-     * @throws \Exception
+     * @throws \\Exception
      */
     public function __construct(int $id = self::DEFAULT_ID)
     {
@@ -72,11 +69,23 @@ class Model {
             }
 
             foreach ($this->relations as $col => $v) {
+                // todo : save of one-to-many and many-to-one
+                // relation can be one-to-many
+                // or many-to-many
                 if (!isset($this->$col)) {
-                    var_dump("FOUND A MULTI RELATION SHIP");
-                    var_dump($v);
                     $targetTable = $v[2];
-                //    $query = "SELECT * FROM " . Utils::graveify($v[2]) . " WHERE "
+                    $query = "SELECT * FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
+                    $stmt = Core::$staticDb->prepare($query);
+                    $rows = $stmt->execute([$this->row_id]);
+                    $this->$col = [];
+                    foreach ($rows as $id => $cols) {
+                        $className = self::tableNameToClass($col);
+                        $colName = self::pluralToSingular($col) . "_id";
+                        $foundId = $cols[$colName];
+                        array_push($this->$col, new $className($foundId));
+                    }
+                    // $this->$col
+                    // create new groups
                 }
             }
         }
@@ -87,13 +96,12 @@ class Model {
      * @return mixed
      */
     public static function tableNameToClass(string $tableName) {
-        $propertiesClass = "\\" . ucfirst($tableName) . "Properties";
-        var_dump($propertiesClass);
+        $propertiesClass = ucfirst($tableName) . "Properties";
         foreach(get_declared_classes() as $class){
-            if($class instanceof $propertiesClass)
+            if(get_parent_class($class) === $propertiesClass)
                 return $class;
         }
-        throw new Exception("Unable to find appropriate model for table name : " . $tableName);
+        throw new \Exception("Unable to find appropriate model for table name : " . $tableName);
     }
 
     /**
@@ -106,13 +114,26 @@ class Model {
             if(strpos($class, $toFind) !== false)
                 return $class;
         }
-        throw new Exception("Unable to find appropriate model for singular model name : " . $name);
+        throw new \Exception("Unable to find appropriate model for singular model name : " . $name);
+    }
+
+    /**
+     * @param string $plural
+     * @return mixed
+     */
+    public static function pluralToSingular(string $plural) {
+        $propertiesClass = ucfirst($plural) . "Properties";
+        foreach(get_declared_classes() as $class){
+            if(get_parent_class($class) === $propertiesClass)
+                return strtolower(($a = explode("\\", $class))[count($a) - 1]);
+        }
+        throw new \Exception("Unable to find appropriate model for table name : " . $plural);
     }
 
     /**
      * Will return model/table metadatas (types for conversions)
      * @return array
-     * @throws \Exception
+     * @throws \\Exception
      */
     public function getModelMetaData() : array {
         $finalOutput = [];
@@ -158,7 +179,7 @@ class Model {
      * @param string $columnName
      * @param mixed $mysqlVaue
      * @return bool|\DateTime|int|string
-     * @throws \Exception
+     * @throws \\Exception
      */
     public function mysqlToPhpVal(string $columnName, $mysqlVaue) {
         if (isset($this->relations[$columnName])) {
@@ -201,7 +222,7 @@ class Model {
      * Reciprocal function of Model::mysqlToPhpVal
      * @param string $key
      * @return int|string
-     * @throws \Exception
+     * @throws \\Exception
      */
     public function phpToMysqlVal(string $key) {
         $value = $this->$key;
