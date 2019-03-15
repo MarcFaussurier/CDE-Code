@@ -100,7 +100,12 @@ class Core {
        $user = new User(1);
        // $user->username = "toto";
         $user->grade = new Grade(2);
-         $user->save();
+        $user->groups[0]->name = "YEAHHHH";
+        $group = new  Group();
+        $group->name = "testone";
+        $user->groups[] = $group;
+
+        $user->save();
 
          var_dump($user);
 

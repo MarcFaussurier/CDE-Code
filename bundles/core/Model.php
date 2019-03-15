@@ -92,6 +92,92 @@ class Model {
     }
 
     /**
+     *
+     */
+    public function save(): bool {
+        $query = "";
+        $params = [];
+        // insert if no id were given
+        if ($this->row_id === self::DEFAULT_ID) {
+            $query = "INSERT INTO `".$this->tableName."` VALUES(null";
+            foreach ($this->tableMetaData as $key => $value) {
+                if ($key !== "row_id") {
+                    $query .= ",?";
+                    array_push($params, $this->phpToMysqlVal($key));
+                }
+            }
+            $query .= ");";
+        }
+        // else we perform an update
+        else {
+            $query = "UPDATE `".$this->tableName."` SET ";
+            $countOfCols = count($this->tableMetaData);
+            $cnt = 0;
+            foreach ($this->tableMetaData as $key => $value) {
+                $cnt++;
+                if ($key !== "row_id") {
+                    $query .= "$key = ?" . (($cnt < $countOfCols) ? "," : "");
+                    array_push($params, $this->phpToMysqlVal($key));
+                }
+            }
+            $query .= " WHERE row_id = ?;";
+            array_push($params, $this->row_id);
+        }
+        $stmt = Core::$staticDb->prepare($query);
+         $stmt->execute($params);
+
+
+         var_dump("IN RELATIONS /////");
+        foreach ($this->relations as $col => $v) {
+            // todo : save of one-to-many and many-to-one
+            // relation can be one-to-many
+            // or many-to-many
+            if(in_array($v[0], ["one_to_many", "many_to_many"])) {
+               $query = "DELETE FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
+               $stmt = Core::$staticDb->prepare($query);
+               $stmt->execute([$this->row_id]);
+
+               foreach ($this->$col as $instance) {
+                   $query = "INSERT INTO " . Utils::graveify($v[2]) . " VALUES (".join(",",str_split(str_repeat("?", 3))) . ");";
+                   $stmt = Core::$staticDb->prepare($query);
+                   $stmt->execute([null, $this->row_id, $instance->row_id]);
+                   $instance->save();
+               }
+
+                   /**
+               $stmt = Core::$staticDb->prepare($query);
+               $rows = $stmt->execute(array_map(function($a){ return $a->row_id; }, $this->$col));
+               $this->$col = [];
+               foreach ($rows as $id => $cols) {
+               $className = self::tableNameToClass($col);
+               $colName = self::pluralToSingular($col) . "_id";
+               $foundId = $cols[$colName];
+               array_push($this->$col, new $className($foundId));
+               }
+
+                */
+                // $this->$col
+                // create new groups
+             }
+        }
+        return true;
+    }
+
+    /**
+     * Will delete the current model
+     * @return bool
+     */
+    public function delete(): bool {
+        // if the model was created, no need to delete it
+        if ($this->row_id !== self::DEFAULT_ID) {
+            $query = "DELETE FROM ".Utils::graveify(self::$tableName)." WHERE row_id = ?;";
+            $stmt = Core::$staticDb->prepare($query);
+            return $stmt->execute([$this->row_id]);
+        }
+        return true;
+    }
+
+    /**
      * @param string $tableName
      * @return mixed
      */
@@ -191,6 +277,8 @@ class Model {
                 case "one_to_many":
                     break;
                 case "many_to_one":
+                    $class = (self::singularModelToClass($columnName));
+                    return new $class(intval($mysqlVaue));
                     break;
                 case "many_to_many":
                     break;
@@ -279,55 +367,6 @@ class Model {
         }
     }
 
-    /**
-     *
-     */
-    public function save(): bool {
-        $query = "";
-        $params = [];
-        // insert if no id were given
-        if ($this->row_id === self::DEFAULT_ID) {
-            $query = "INSERT INTO `".$this->tableName."` VALUES(null";
-            foreach ($this->tableMetaData as $key => $value) {
-                if ($key !== "row_id") {
-                    $query .= ",?";
-                    array_push($params, $this->phpToMysqlVal($key));
-                }
-            }
-            $query .= ");";
-        }
-        // else we perform an update
-        else {
-            $query = "UPDATE `".$this->tableName."` SET ";
-            $countOfCols = count($this->tableMetaData);
-            $cnt = 0;
-            foreach ($this->tableMetaData as $key => $value) {
-                $cnt++;
-                if ($key !== "row_id") {
-                    $query .= "$key = ?" . (($cnt < $countOfCols) ? "," : "");
-                    array_push($params, $this->phpToMysqlVal($key));
-                }
-            }
-            $query .= " WHERE row_id = ?;";
-            array_push($params, $this->row_id);
-        }
-        $stmt = Core::$staticDb->prepare($query);
-        return $stmt->execute($params);
-    }
-
-    /**
-     * Will delete the current model
-     * @return bool
-     */
-    public function delete(): bool {
-        // if the model was created, no need to delete it
-        if ($this->row_id !== self::DEFAULT_ID) {
-            $query = "DELETE FROM ".Utils::graveify(self::$tableName)." WHERE row_id = ?;";
-            $stmt = Core::$staticDb->prepare($query);
-            return $stmt->execute([$this->row_id]);
-        }
-        return true;
-    }
 
     public static function getModelClass(): string {
         return "\\" . get_called_class();
