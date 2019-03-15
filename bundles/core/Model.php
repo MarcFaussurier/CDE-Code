@@ -115,14 +115,18 @@ class Model {
             $cnt = 0;
             foreach ($this->tableMetaData as $key => $value) {
                 $cnt++;
-                if ($key !== "row_id") {
-                    $query .= "$key = ?" . (($cnt < $countOfCols) ? "," : "");
+                var_dump("KEYY : ") ;
+                var_dump($key);
+                if (($key !== "row_id") && ($key !== "")) {
+                    $query .= "$key = ?" . (($cnt < ($countOfCols - 1)) ? "," : "");
                     array_push($params, $this->phpToMysqlVal($key));
                 }
             }
             $query .= " WHERE row_id = ?;";
             array_push($params, $this->row_id);
         }
+        var_dump($params);
+        var_dump($query);
         $stmt = Core::$staticDb->prepare($query);
          $stmt->execute($params);
 
@@ -199,6 +203,7 @@ class Model {
     public static function tableNameToClass(string $tableName) {
         $propertiesClass = ucfirst($tableName) . "Properties";
         foreach(get_declared_classes() as $class){
+            var_dump($class);
             if(get_parent_class($class) === $propertiesClass)
                 return $class;
         }
@@ -225,6 +230,7 @@ class Model {
     public static function pluralToSingular(string $plural) {
         $propertiesClass = ucfirst($plural) . "Properties";
         foreach(get_declared_classes() as $class){
+            var_dump($class);
             if(get_parent_class($class) === $propertiesClass)
                 return strtolower(($a = explode("\\", $class))[count($a) - 1]);
         }
@@ -352,6 +358,8 @@ class Model {
             return 1;
         } else {
             switch ($a = explode("(", $this->tableMetaData[$key]["mysql_type"])[0]) {
+                case "":
+                    break;
                 case "int":
                     return intval($this->$key);
                 case "varchar":
@@ -378,7 +386,7 @@ class Model {
                                 ($value)->getTimestamp())
                             ) < self::MINIMAL_TIMESTAMP ? self::MINIMAL_TIMESTAMP	 : $a);
                 default:
-                    throw new \Exception("Unknow MySQL type");
+                    throw new \Exception("Unknow MySQL type :".$a);
                     break;
             }
         }

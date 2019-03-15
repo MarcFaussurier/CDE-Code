@@ -84,7 +84,7 @@ class Core {
             __DIR__ . "/../../generated/views"
         );
 
-        new \CloudsDotEarth\Bundles\Core\ModelGenerator
+        $mg = new \CloudsDotEarth\Bundles\Core\ModelGenerator
         ($this,
             __DIR__ . "/../../generated/models"
         );
@@ -92,9 +92,9 @@ class Core {
         foreach (glob(__DIR__ . "/../../generated/models/*.php") as $k => $v) {
             require_once $v;
         }
-
         self::includeDirectory(__DIR__ . "/../../src/server/models");
 
+        $mg->secondStep();
 
         // update sample
        $user = new User(1);

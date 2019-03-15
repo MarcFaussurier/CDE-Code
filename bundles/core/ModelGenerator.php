@@ -13,6 +13,8 @@ class ModelGenerator
 {
 
     public $outputDirectory;
+    private $innerTables = [];
+    private $core;
     /**
      * ModelGenerator constructor.
      * @param Core $core
@@ -21,15 +23,44 @@ class ModelGenerator
      */
     public function __construct(Core &$core, string $outputDirectory)
     {
+        $this->core = $core;
         $this->outputDirectory = $outputDirectory;
         $tables = Utils::getDatabaseTables($core);
         foreach ($tables as $k => $v) {
             // we don't use table that start with a # as they are for jointures
             if (substr($v, 0, 1) !== "#") {
+                array_push($this->innerTables, $v);
                 $cols = Utils::getColsInTable($core, $v);
                 $this->writePropertiesClass($v, $cols);
             }
         }
+    }
+
+    public function secondStep() {
+        foreach ($this->innerTables as $k => $table) {
+            $class = Model::tableNameToClass($table);
+            $instance = new $class;
+            $path = $this->outputDirectory . "/" . ucfirst($table) . "Properties.php";
+            foreach ($instance->relations as $col => $v) {
+                // todo : save of one-to-many and many-to-one
+                // relation can be one-to-many
+                // or many-to-many
+                if (in_array($v[0], ["one_to_many", "many_to_many"])) {
+                    $a = explode("}", file_get_contents($path));
+                    unset($a[count($a) - 1]);
+                    $a = join("}", $a);
+                    $fileContent = $a;
+                    $fileContent .= " 
+    /**
+    * - In relation with the $col table.
+    * @var ".Model::tableNameToClass($col)."[]
+    */
+    public $$col = [];" . PHP_EOL;
+                $fileContent .= "} ";
+                file_put_contents($path, $fileContent);
+            }
+        }
+    }
     }
 
     /**
