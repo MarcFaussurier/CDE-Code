@@ -21,6 +21,6 @@ class SomeInternal implements MiddlewareInterface
         // TODO: Implement process() method.
         $_SERVER["REQUEST_METHOD"] = "TESTONE";
         $request->withMethod($_SERVER["REQUEST_METHOD"]);
-        $handler->handle($request);
+        return $handler->handle($request);
     }
 }

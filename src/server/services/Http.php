@@ -35,34 +35,11 @@ class Http extends Service implements ServiceInterface {
     public function register(): void {
         $this->service = new \Swoole\Http\Server($this->defaultIP, $this->defaultPort);
 
-        $this->service->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+        $this->service->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response &$response) {
             $this->initDbIfNotSet();
-            $psr7Request = $this->convertToPsrRequest($request);
-            $requestHandler = new RequestHandler();
-            $requestHandler->setCore($this->core);
-            $path = __DIR__ . "/../middlewares.php";
-            var_dump($path);
-            $f = require_once $path;
-            var_dump($f);
-            $dispatcher = new Dispatcher($requestHandler, $f);
-            $psr7response = $dispatcher->handle($psr7Request);
-
-            /*
-            $user = new User(1);
-            $user->username = "toto";
-            $user->grade = new Grade(1);
-            $user->groups[0] = new Group();
-            $user->groups[0]->name = "YEAHHHH";
-            $group = new  Group();
-            $group->name = "testone";
-            $user->groups[] = $group;
-            $user->save();
-            var_dump($user); */
-
-
-            var_dump($request);
-
-            $response->end("hello world");
+            $psr_request = $this->convertToPsrRequest($request);
+            $psr_response = $this->core->handle($psr_request);
+            $this->replyUsingResponse($response, $psr_response);
         });
     }
 
@@ -72,7 +49,6 @@ class Http extends Service implements ServiceInterface {
      */
     public function convertToPsrRequest($request): ServerRequestInterface {
       //  return new R
-        var_dump($request);
         $_SERVER = $GLOBALS["_SERVER"] = is_null($request->server) ? [] : $request->server;
         $_REQUEST = $GLOBALS["_REQUEST"] = is_null($request->request) ? [] : $request->request;
         $_COOKIE = $GLOBALS["_COOKIE"] = is_null($request->cookie) ? [] : $request->cookie;
@@ -85,11 +61,16 @@ class Http extends Service implements ServiceInterface {
     }
 
     /**
-     * @param ResponseInterface $response
-     * @return \Swoole\Http\Response
+     * @param \Swoole\Http\Response $swooleResponse
+     * @param ResponseInterface $psrResponse
+     * @return void
      */
-    public function convertToPsrResponse(ResponseInterface $response) : \StdClass {
-
+    public function replyUsingResponse(&$swooleResponse, ResponseInterface $psrResponse) : void {
+        foreach ($psrResponse->getHeaders() as $key => $header) {
+            $swooleResponse->header($key, join(",", $header));
+        }
+        $swooleResponse->end($psrResponse->getBody()->getContents());
+        var_dump($psrResponse->getBody()->getContents());
     }
 
 

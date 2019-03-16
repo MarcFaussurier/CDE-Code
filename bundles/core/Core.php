@@ -11,11 +11,16 @@ namespace CloudsDotEarth\Bundles\Core;
 use CloudsDotEarth\App\Models\Grade;
 use CloudsDotEarth\App\Models\Group;
 use CloudsDotEarth\App\Models\User;
+use Ellipse\Dispatcher;
 use LightnCandy\LightnCandy;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
 
-class Core {
+class Core implements RequestHandlerInterface {
     /**
      * @var ControllerStack
      */
@@ -45,14 +50,17 @@ class Core {
     public static $staticDb;
 
     /**
+     * @var MiddlewareInterface[]
+     */
+    public $middleware;
+
+    /**
      * Core constructor.
      */
     public function __construct()
     {
-        (
-            new Dotenv()
-        )   ->load(realpath(__DIR__ . "/../../configs/.env"));
-
+        (new Dotenv()
+        )->     load(realpath(__DIR__ . "/../../configs/.env"));
         $this->envConfig["database"] = [];
         foreach($_ENV as $k => $v) {
             $upperKey = strtoupper($k);
@@ -75,13 +83,9 @@ class Core {
         $this->parsedYamlConfig = Yaml::parseFile(__DIR__ . "/../../configs/dev/config.yaml");
         $this->serviceStack = new ServiceStack();
         $this->serviceStack->setCore($this);
-
         $this->controllerStack = new ControllerStack();
-
-
-
+        $this->middleware = require __DIR__ . "/../../src/server/middlewares.php";
         $this->serviceStack->start();
-
 
 
         // update sample
@@ -102,6 +106,11 @@ class Core {
      //   $results = (new User())->select("row_id = ?", [1]);
      //   var_dump($results);
 
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface {
+        $dispatcher = new Dispatcher($this->controllerStack, $this->middleware);
+        return $dispatcher->handle($request);
     }
 
     /**

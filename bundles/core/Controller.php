@@ -17,32 +17,16 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Controller {
     /**
-     * Format is function name, uri regex, service regex
+     * Format is function name, uri regex, service regex, priority, controller
      * @var array[]
      */
     public $methods = [];
 
     /**
-     * Will return false if n controller method match,
-     * Else if a match occurred, it will return a ServerRequestInterface
-     * @param ServerRequestInterface $request
-     * @return bool|ResponseInterface
-     */
-    public function handle(ServerRequestInterface $request) {
-        foreach($this->methods as $v) {
-            if ((preg_match($v[1], $request->getUri()) !== false) &&
-                (preg_match($v[2], $request->getMethod()) !== false)) {
-                return $this->$v[0]($request);
-            }
-        }
-        return false;
-    }
-
-    /**
      * Will set $methods array using reflexion // tokens parsing
      * @throws \ReflectionException
      */
-    public function setMetaData() {
+    public function setMetaData() : void {
         $childClass = get_class($this);
         $child = new $childClass();
         $class_info = new \ReflectionClass($child);
@@ -65,7 +49,9 @@ class Controller {
                         $uri = explode("\n",$exploded)[0];
                         $exploded = explode("@services ", $lastComment)[1];
                         $services = explode("\n",$exploded)[0];
-                        $output[] = [$lastFunction, $uri, $services];
+                        $exploded = explode("@priority ", $lastComment)[1];
+                        $priority = explode("\n",$exploded)[0];
+                        $output[] = [$lastFunction, $uri, $services, $priority, $this];
                     }
                     $lastComment = "";
                 } else {
@@ -75,5 +61,6 @@ class Controller {
                 }
             }
         }
+        $this->methods = $output;
     }
 }

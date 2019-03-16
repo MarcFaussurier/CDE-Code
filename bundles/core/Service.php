@@ -126,4 +126,14 @@ class Service implements CoreAwareInterface, ServiceInterface {
             $this->wasDbInit = true;
         }
     }
+
+    /**
+     * @param \Swoole\Http\Response $swooleResponse
+     * @param ResponseInterface $psrResponse
+     * @return void
+     */
+    public function replyUsingResponse(&$swooleResponse, ResponseInterface $psrResponse) : void {
+
+    }
+
 }
