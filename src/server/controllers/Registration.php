@@ -11,10 +11,4 @@ namespace CloudsDotEarth\App\Controllers;
 use CloudsDotEarth\Bundles\Core\Controller;
 
 class Registration extends Controller {
-    public function __construct()
-    {
-        $this->registerMethod("/", function ($request, $regexMatches) {
-            echo "march";
-        });
-    }
 }

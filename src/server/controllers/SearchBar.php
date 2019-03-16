@@ -10,10 +10,4 @@ namespace CloudsDotEarth\App\Controllers;
 use CloudsDotEarth\Bundles\Core\Controller;
 
 class SearchBar extends Controller {
-    public function __construct()
-    {
-        $this->registerMethod("/", function ($request, $regexMatches) {
-            echo "march";
-        });
-    }
 }

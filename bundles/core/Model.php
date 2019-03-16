@@ -97,6 +97,7 @@ class Model {
     public function save(): bool {
         $query = "";
         $params = [];
+        $success = true;
         // insert if no id were given
         if ($this->row_id === self::DEFAULT_ID) {
             $query = "INSERT INTO `".$this->tableName."` VALUES(null";
@@ -124,24 +125,34 @@ class Model {
             array_push($params, $this->row_id);
         }
         $stmt = Core::$staticDb->prepare($query);
-        $stmt->execute($params);
+        if (!$stmt->execute($params)) {
+            $success = false;
+        }
         foreach ($this->relations as $col => $v) {
-            // todo : save of one-to-many and many-to-one
-            // relation can be one-to-many
-            // or many-to-many
             if(in_array($v[0], ["one_to_many", "many_to_many"])) {
                $query = "DELETE FROM " . Utils::graveify($v[2]) . " WHERE " . Utils::graveify(self::pluralToSingular($this->tableName) . "_id") . " = ?;";
                $stmt = Core::$staticDb->prepare($query);
-               $stmt->execute([$this->row_id]);
+                if (!$stmt->execute([$this->row_id])) {
+                    $success = false;
+                }
                foreach ($this->$col as $instance) {
                    $query = "INSERT INTO " . Utils::graveify($v[2]) . " VALUES (".join(",",str_split(str_repeat("?", 3))) . ");";
                    $stmt = Core::$staticDb->prepare($query);
-                   $stmt->execute([null, $this->row_id, $instance->row_id]);
-                   $instance->save();
+                   if (!$stmt->execute([null, $this->row_id, $instance->row_id])) {
+                       $success = false;
+                   }
+                   if (!$instance->save()) {
+                       $success = false;
+                   }
                }
              }
         }
-        return true;
+        foreach ($this->relations as $col => $v) {
+            if (in_array($v[0], ["one_to_one", "many_to_one"])) {
+                $this->$col->save();
+            }
+        }
+        return $success;
     }
 
     /**
@@ -170,7 +181,7 @@ class Model {
                 }
             }
         }
-        return true;
+        return $success;
     }
 
     /**
@@ -180,7 +191,6 @@ class Model {
     public static function tableNameToClass(string $tableName) {
         $propertiesClass = ucfirst($tableName) . "Properties";
         foreach(get_declared_classes() as $class){
-            var_dump($class);
             if(get_parent_class($class) === $propertiesClass)
                 return $class;
         }
@@ -315,8 +325,6 @@ class Model {
     public function phpToMysqlVal(string $key) {
         $value = $this->$key;
         if (isset($this->relations[$key])) {
-            var_dump("SAVING A RELATION : " . $key);
-            var_dump($value);
             switch($this->relations[$key][0]) {
                 case 'one_to_one':
                     return $this->$key->row_id;
@@ -369,7 +377,9 @@ class Model {
         }
     }
 
-
+    /**
+     * @return string
+     */
     public static function getModelClass(): string {
         return "\\" . get_called_class();
     }

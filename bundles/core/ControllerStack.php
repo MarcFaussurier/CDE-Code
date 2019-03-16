@@ -23,5 +23,10 @@ class ControllerStack extends Stack
     public function __construct()
     {
        parent::__construct("controllers");
+       var_dump("SETTING CONTROLLER METADATA : ");
+       foreach ($this->data as $controller) {
+           echo "setting metadata of " . get_class($controller) . PHP_EOL;
+           $controller->setMetaData();
+       }
     }
 }

@@ -35,6 +35,7 @@ class Stack
         $this->stackType = $stackType;
         // get all controller files
         $classes = $this->getStackFiles();
+        var_dump($classes);
         foreach ($classes as $k => $v) {
             // convert toto/../foo/bar.php to foo/bar
             $class = explode("../", $v);
@@ -50,6 +51,13 @@ class Stack
                 }
                 $class[$key] = ucfirst($item);
             }
+            if ($class[0] === "Src") {
+                unset($class[0]);
+            }
+            if ($class[1] === "Server") {
+                unset($class[1]);
+            }
+            var_dump($class);
             $class = "\\" . join("\\", $class);
             // add the appropriate class prefix
             if ($firstItem === "bundles") {
@@ -66,10 +74,16 @@ class Stack
      * Will load all stack files and return a stack containing all key : value arguments
      * @return array
      */
-    public function getStackFiles(): array {
-        $bundleFiles = glob(__DIR__ . "/../../../bundles/*/". $this->stackType ."/*.php");
-        $srcFiles = glob(__DIR__ . "/../" . $this->stackType ."/*.php");
+    public function getStackFiles(bool $includeFiles = true): array {
+        $bundleFiles = glob(__DIR__ . "/../../bundles/*/". $this->stackType ."/*.php");
+        $srcFiles = glob(__DIR__ . "/../../src/server/" . $this->stackType ."/*.php");
         // array merge priority is the higher to the left
-        return array_merge($bundleFiles, $srcFiles);
+        $stackFiles = array_merge($bundleFiles, $srcFiles);
+        if ($includeFiles) {
+            foreach ($stackFiles as $v)  {
+                require_once  $v;
+            }
+        }
+        return $stackFiles;
     }
 }

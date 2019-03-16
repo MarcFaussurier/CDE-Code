@@ -73,31 +73,19 @@ class Core {
             throw new \Exception("Unable to open yaml file : " . $yamlPath . " (please check .env file)");
         }
         $this->parsedYamlConfig = Yaml::parseFile(__DIR__ . "/../../configs/dev/config.yaml");
-        $this->controllerStack = new ControllerStack();
         $this->serviceStack = new ServiceStack();
         $this->serviceStack->setCore($this);
-        $this->setDb();
 
-        new ViewCompiler
-        (
-            [__DIR__ . "/../../src/client/views"],
-            __DIR__ . "/../../generated/views"
-        );
+        $this->controllerStack = new ControllerStack();
 
-        $mg = new \CloudsDotEarth\Bundles\Core\ModelGenerator
-        ($this,
-            __DIR__ . "/../../generated/models"
-        );
 
-        foreach (glob(__DIR__ . "/../../generated/models/*.php") as $k => $v) {
-            require_once $v;
-        }
-        self::includeDirectory(__DIR__ . "/../../src/server/models");
 
-        $mg->secondStep();
+        $this->serviceStack->start();
+
+
 
         // update sample
-       $user = new User(1);
+      /* $user = new User(1);
        // $user->username = "toto";
         $user->grade = new Grade(1);
         $user->groups[0] = new Group();
@@ -108,7 +96,8 @@ class Core {
 
         $user->save();
 
-         var_dump($user);
+         var_dump($user);*/
+
 
      //   $results = (new User())->select("row_id = ?", [1]);
      //   var_dump($results);
