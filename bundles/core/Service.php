@@ -124,6 +124,11 @@ class Service implements CoreAwareInterface, ServiceInterface {
 
             $mg->secondStep();
             $this->wasDbInit = true;
+
+            $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . "/../../src/client/views");
+            Core::$twig  = new \Twig\Environment($loader, [
+                'cache' => false, //__DIR__ . "/../../cache",
+            ]);
         }
     }
 

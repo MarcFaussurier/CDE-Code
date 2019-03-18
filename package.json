@@ -6,7 +6,25 @@
   "author": "marcfsr <faussurier.marc@icloud.com>",
   "license": "MIT",
   "dependencies": {
+    "autoprefixer": "^9.5.0",
     "chalk": "^2.4.2",
-    "handlebars": "^4.1.0"
+    "css-loader": "^2.1.1",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.14.0",
+    "twing": "^2.2.2",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.3.0"
+  },
+  "scripts": {
+    "build": "source configs/.env && webpack --config configs/$ENV_MODE/webpack.js"
   }
 }

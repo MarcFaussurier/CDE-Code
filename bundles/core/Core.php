@@ -50,6 +50,10 @@ class Core implements RequestHandlerInterface {
     public static $staticDb;
 
     /**
+     * @var \Twig\Environment
+     */
+    public static $twig;
+    /**
      * @var MiddlewareInterface[]
      */
     public $middleware;
@@ -109,8 +113,12 @@ class Core implements RequestHandlerInterface {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface {
+        // REQUEST STATE WILL CONTAIN GENERATED TWIG ARGUMENTS AS ARRAY
+        $GLOBALS["_REQUEST_STATE"] = [null];
         $dispatcher = new Dispatcher($this->controllerStack, $this->middleware);
-        return $dispatcher->handle($request);
+        $result =  $dispatcher->handle($request);
+        var_dump($GLOBALS["_REQUEST_STATE"]);
+        return $result;
     }
 
     /**
