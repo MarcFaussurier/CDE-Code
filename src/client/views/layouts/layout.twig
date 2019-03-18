@@ -2,9 +2,12 @@
     <head>
         {% block head  %}
         {% endblock %}
+        <link type="text/css" href="assets/build/b8326eb4e3d0442ebb48.css">
     </head>
     <body>
+        {% include 'components/nav.twig' %}
         {% block body %}
         {% endblock %}
+        <script type="text/javascript" src="assets/build/bundle.js"></script>
     </body>
 </html>

@@ -31,7 +31,7 @@ class Home extends Controller {
         $headers = ['X-Foo' => 'Bar'];
         $body = 'home!';
         $protocol = '1.1';
-        $body = new View("pages/page.twig", ["name" => "Fabien"]);
+        $body = new View("pages/home.twig", ["name" => "Fabien"]);
         $response = new \GuzzleHttp\Psr7\Response($status, $headers, $body, $protocol);
         return false;
     }

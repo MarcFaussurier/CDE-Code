@@ -10,6 +10,4 @@ services:
 - name  : http
   port  : 8080
 # ip : 0.0.0.0
-  swoole_options:
-      document_root : /../../public
-      enable_static_handler : true
+#  swoole_options:

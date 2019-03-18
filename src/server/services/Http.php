@@ -34,13 +34,53 @@ class Http extends Service implements ServiceInterface {
 
     public function register(): void {
         $this->service = new \Swoole\Http\Server($this->defaultIP, $this->defaultPort);
+        $static = [
+            'css'  => 'text/css',
+            'js'   => 'text/javascript',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
+            'jpg'  => 'image/jpg',
+            'jpeg' => 'image/jpg',
+            'mp4'  => 'video/mp4',
+            'map' => 'application/json'
+        ];
 
-        $this->service->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response &$response) {
+        $this->service->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response &$response) use ($static) {
             $this->initDbIfNotSet();
+            if ($this->getStaticFile($request, $response, $static)) {
+                return;
+            }
             $psr_request = $this->convertToPsrRequest($request);
             $psr_response = $this->core->handle($psr_request);
             $this->replyUsingResponse($response, $psr_response);
         });
+    }
+
+    /**
+     * @param swoole_http_request $request
+     * @paramdocument_rootdocument_rootdc swoole_http_response $response
+     * @param array $static
+     * @return bool
+     */
+    public function getStaticFile(
+        \Swoole\Http\Request $request,
+        \Swoole\Http\Response &$response,
+        array $static
+    ) : bool {
+        $staticFile = __DIR__ . "/../../../www". $request->server['request_uri'];
+        var_dump($staticFile);
+        if (! file_exists($staticFile)) {
+            var_dump("NT EXIST");
+            return false;
+        }
+        var_dump("EXISTRS");
+        $type = pathinfo($staticFile, PATHINFO_EXTENSION);
+        if (! isset($static[$type])) {
+            return false;
+        }
+        $response->header('Content-Type', $static[$type]);
+        $response->sendfile($staticFile);
+        return true;
     }
 
     /**
