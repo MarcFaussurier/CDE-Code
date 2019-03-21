@@ -26,10 +26,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Http extends Service implements ServiceInterface {
 
-    public const supportedTypes = [
-        "GET", "POST", "UPDATE", "DELETE"
-    ];
-
     public $defaultPort = 8080;
 
     public function register(): void {
@@ -44,7 +40,6 @@ class Http extends Service implements ServiceInterface {
             'mp4'  => 'video/mp4',
             'map' => 'application/json'
         ];
-
         $this->service->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response &$response) use ($static) {
             $this->initDbIfNotSet();
             if ($this->getStaticFile($request, $response, $static)) {

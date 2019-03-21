@@ -88,7 +88,7 @@ class Core implements RequestHandlerInterface {
         $this->serviceStack = new ServiceStack();
         $this->serviceStack->setCore($this);
         $this->controllerStack = new ControllerStack();
-        $this->middleware = require __DIR__ . "/../../src/server/middlewares.php";
+        $this->middleware = require __DIR__ . "/../../src/server/middleware.php";
         $this->serviceStack->start();
 
 
@@ -117,7 +117,6 @@ class Core implements RequestHandlerInterface {
         $GLOBALS["_REQUEST_STATE"] = [null];
         $dispatcher = new Dispatcher($this->controllerStack, $this->middleware);
         $result =  $dispatcher->handle($request);
-        var_dump($GLOBALS["_REQUEST_STATE"]);
         return $result;
     }
 

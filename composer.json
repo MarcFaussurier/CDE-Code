@@ -16,6 +16,13 @@
         "version": "master",
         "url": "https://github.com/MarcFaussurier/swoole-tests.git",
         "type": "git"
+      },{
+            "type": "vcs",
+            "url": "https://github.com/MarcFaussurier/Workerman"
+        },
+      {
+        "type": "vcs",
+        "url": "https://github.com/MarcFaussurier/phpsocket.io.git"
       }
     ],
     "require": {
@@ -29,7 +36,10 @@
         "ellipse/dispatcher": "dev-master",
         "guzzlehttp/guzzle": "^6.3@dev",
         "twig/twig": "^2.0",
-        "ezyang/htmlpurifier": "dev-master"
+        "ezyang/htmlpurifier": "dev-master",
+        "zendframework/zend-diactoros": "^2.1@dev",
+        "workerman/workerman": "dev-master",
+        "workerman/phpsocket.io": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^8",

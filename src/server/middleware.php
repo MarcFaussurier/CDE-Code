@@ -8,5 +8,5 @@
 
 // register all middlewares here
 return [
-    new \CloudsDotEarth\App\middlewares\SomeInternal()
+    new \CloudsDotEarth\App\middlewares\ClientViews()
 ];
