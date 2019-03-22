@@ -18,7 +18,7 @@ class Stack
     /**
      * @var string
      */
-    private $stackType;
+    public $stackType;
 
     /**
      * @var \stdClass[]

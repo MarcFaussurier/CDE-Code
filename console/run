@@ -2,4 +2,4 @@
 
 # todo : add client compilation too
 
-console/server_start;
+console/server_start "$@";

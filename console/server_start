@@ -8,6 +8,6 @@ include_once __DIR__ . "/../vendor/autoload.php";
  * Time: 12:06
  */
 
-
+define('GLOBAL_START', true);
 new \CloudsDotEarth\Bundles\Core\Core();
 

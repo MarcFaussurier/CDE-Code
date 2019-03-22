@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# todo : add client compilation too
+
+php console/windows_workers/http.php console/windows_workers/socketio.php

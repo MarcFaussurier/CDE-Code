@@ -31,7 +31,7 @@ class Service implements CoreAwareInterface, ServiceInterface {
     public $defaultPort = 8080;
 
     /**
-     * @var \Swoole\Server
+     * @var \Workerman\Worker
      */
     public $service;
 
@@ -84,10 +84,6 @@ class Service implements CoreAwareInterface, ServiceInterface {
         echo "WARNING: default service convertToPsrResponse function called ... " . PHP_EOL;
     }
 
-    public function start(): void {
-        echo "WARNING: default service start function called ... " . PHP_EOL;
-    }
-
     public function register(): void {
         echo "WARNING: default service register function called ... " . PHP_EOL;
     }
@@ -132,13 +128,11 @@ class Service implements CoreAwareInterface, ServiceInterface {
         }
     }
 
-    /**
-     * @param \Swoole\Http\Response $swooleResponse
-     * @param ResponseInterface $psrResponse
-     * @return void
-     */
-    public function replyUsingResponse(&$swooleResponse, ResponseInterface $psrResponse) : void {
 
+    public function start(): void {
+        if (!defined("UNIX_MODE")) {
+            var_dump("UNIX NOT DEFINED");
+            \Workerman\Worker::runAll();
+        }
     }
-
 }

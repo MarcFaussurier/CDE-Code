@@ -58,11 +58,13 @@ class Core implements RequestHandlerInterface {
      */
     public $middleware;
 
+    public $services = [];
     /**
      * Core constructor.
      */
-    public function __construct()
+    public function __construct($services = "")
     {
+        $this->services = $services;
         (new Dotenv()
         )->     load(realpath(__DIR__ . "/../../configs/.env"));
         $this->envConfig["database"] = [];
@@ -90,26 +92,6 @@ class Core implements RequestHandlerInterface {
         $this->controllerStack = new ControllerStack();
         $this->middleware = require __DIR__ . "/../../src/server/middleware.php";
         $this->serviceStack->start();
-
-
-        // update sample
-      /* $user = new User(1);
-       // $user->username = "toto";
-        $user->grade = new Grade(1);
-        $user->groups[0] = new Group();
-        $user->groups[0]->name = "YEAHHHH";
-        $group = new  Group();
-        $group->name = "testone";
-        $user->groups[] = $group;
-
-        $user->save();
-
-         var_dump($user);*/
-
-
-     //   $results = (new User())->select("row_id = ?", [1]);
-     //   var_dump($results);
-
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface {

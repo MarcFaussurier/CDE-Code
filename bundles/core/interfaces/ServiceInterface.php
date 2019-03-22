@@ -16,18 +16,5 @@ interface ServiceInterface
 {
     public function register(): void;
 
-    /**
-     * @param \stdClass $request
-     * @return ServerRequestInterface
-     */
-    public function convertToPsrRequest(\stdClass $request): ServerRequestInterface;
-
-    /**
-     * @param \stdClass
-     * @param ResponseInterface $psrResponse
-     * @return void
-     */
-    public function replyUsingResponse(&$swooleResponse, ResponseInterface $psrResponse) : void;
-
     public function start(): void;
 }
